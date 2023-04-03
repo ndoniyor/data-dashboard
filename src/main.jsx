@@ -8,11 +8,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-  <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index={true} element={<App />} />
-          <Route index={false}
+          <Route
+            index={false}
+            path="/heroInfo/:charID"
+            element={<DetailView />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

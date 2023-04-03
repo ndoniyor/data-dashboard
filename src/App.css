@@ -25,9 +25,9 @@ nav{
   right: 0;
 }
 
-.homeLink{
+.home-link{
   border: 1px dotted white;
-  background: white;
+  background: #1d1f1d;
   width: 75px;
 }
 

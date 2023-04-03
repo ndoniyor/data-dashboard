@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MD5 } from "crypto-js";
-import { Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import DetailView from "../routes/DetailView";
 import "./App.css";
 
@@ -10,16 +10,15 @@ const PRIV_KEY = "dd7e326f3f9fb5d320f24cf5eeab555dd5bba3a5";
 function App() {
   const [searchInput, setSearchInput] = useState("");
   const [seriesList, setList] = useState([]);
-  const [charList, setChars] = useState([]);
+  const [charList, setChars] = useState({});
   const [seriesCount, setSeriesCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [oldestSeries, setOldest] = useState(0);
   const [newestSeries, setNewest] = useState(0);
 
-
   //need to extract character ids. located in character.resourceURI
   const searchChar = (searchValue) => {
-    const charNames = [];
+    let charNames = {};
     setSearchInput(searchValue);
     if (searchValue != "") {
       seriesList.forEach((series) => {
@@ -29,16 +28,19 @@ function App() {
               character.name &&
               character.name.toLowerCase().startsWith(searchValue.toLowerCase())
             ) {
-              if (!charNames.includes(character.name)) {
-                charNames.push(character.name);
+              if (!(character.name in charNames)) {
+                let ID = character.resourceURI.split("/");
+                ID = ID[ID.length - 1];
+                charNames = { ...charNames, [character.name]: ID };
               }
             }
           });
         }
       });
+      console.log(charNames);
       setChars(charNames);
     }
-    setCharCount(charNames.length);
+    setCharCount(Object.keys(charList).length);
   };
 
   const fetchSeries = async (seriesName) => {
@@ -101,10 +103,11 @@ function App() {
           <h3>Characters</h3>
           {charCount > 0 && <p class="lastData">Count: {charCount}</p>}
           <ul>
-            {charList &&
-              charList.map((name, index) => {
-                return <li key={index}>{name}</li>;
-              })}
+            {Object.keys(charList).map((key, index) => {
+              return (
+                <button className="charBtns" key={index}>{`${key}`}</button>
+              );
+            })}
           </ul>
         </div>
 
