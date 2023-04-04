@@ -2,12 +2,12 @@ import { Outlet, Link } from "react-router-dom";
 
 const Layout = () => {
   return (
-    <div>
+    <div className="route-page">
       <nav>
         <ul>
-          <li className="home-link" key="home-button">
-            <Link to="/">
-              Home
+          <li  key="home-button">
+            <Link className="home-link" to="/">
+              HOME
             </Link>
           </li>
         </ul>

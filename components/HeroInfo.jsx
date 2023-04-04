@@ -1,13 +1,14 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MD5 } from "crypto-js";
 
-const API_KEY = "26474ad52214f6a11bc60ef59c2c59fb";
-const PRIV_KEY = "dd7e326f3f9fb5d320f24cf5eeab555dd5bba3a5";
+
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
+const PRIV_KEY = import.meta.env.VITE_APP_PRIV_KEY;
 
 const HeroView = () => {
   let params = useParams();
-  const [details, setDetails] = useState(null);
+  const [description, setDescription] = useState("");
   const [charName, setName] = useState("");
   const [picPath, setPath] = useState("");
   const [events, setEvents] = useState([]);
@@ -35,8 +36,9 @@ const HeroView = () => {
         return event.name;
       })
     );
+    setDescription(data[0].description);
 
-    const fullPath = data[0].thumbnail.path + "/portrait_medium.jpg";
+    const fullPath = data[0].thumbnail.path + "/portrait_xlarge.jpg";
     setPath(fullPath);
   };
 
@@ -47,14 +49,22 @@ const HeroView = () => {
   return (
     <div className="HeroView">
       <h2>Name: {charName} </h2>
-      {picPath && <img src={picPath} />}
-      <ul>
-        <h3>Events</h3>
-        {events &&
-          events.map((event, index) => {
-            return <li key={index}>{event}</li>;
-          })}
-      </ul>
+      {picPath && <img className="char-portrait" src={picPath} />}
+      <div className="hero-results">
+        <div className="hero-seriesList">
+          <ul>
+            <h3>Events</h3>
+            {events &&
+              events.map((event, index) => {
+                return <li key={index}>{event}</li>;
+              })}
+          </ul>
+        </div>
+        <div className="hero-description">
+          <h3>Description</h3>
+          {description && <li className="desc-text">{description}</li>}
+        </div>
+      </div>
     </div>
   );
 };
