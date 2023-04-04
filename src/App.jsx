@@ -1,32 +1,49 @@
 import { useState, useEffect } from "react";
 import { MD5 } from "crypto-js";
-import { Route, Routes } from "react-router-dom";
-import DetailView from "../routes/DetailView";
+import { Link } from "react-router-dom";
 import "./App.css";
+import SeriesChart from "../components/SeriesChart";
 
-const API_KEY = "26474ad52214f6a11bc60ef59c2c59fb";
-const PRIV_KEY = "dd7e326f3f9fb5d320f24cf5eeab555dd5bba3a5";
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
+const PRIV_KEY = import.meta.env.VITE_APP_PRIV_KEY;
 
 function App() {
-  const [searchInput, setSearchInput] = useState("");
+  const [seriesSearchInput, setSeriesSearch] = useState("");
+  const [charSearchInput, setCharacterSearch] = useState("");
   const [seriesList, setList] = useState([]);
   const [charList, setChars] = useState({});
   const [seriesCount, setSeriesCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+  const [yearData, setYearData] = useState({});
   const [oldestSeries, setOldest] = useState(0);
   const [newestSeries, setNewest] = useState(0);
 
   //need to extract character ids. located in character.resourceURI
-  const searchChar = (searchValue) => {
+
+  const handleSeriesSearch = (event) => {
+    setSeriesSearch(event.target.value);
+  };
+
+  const handleCharacterSearch = (event) => {
+    setCharacterSearch(event.target.value);
+    searchChar();
+  };
+
+  const handleSubmit = () => {
+    fetchSeries();
+  };
+
+  const searchChar = () => {
     let charNames = {};
-    setSearchInput(searchValue);
-    if (searchValue != "") {
+    if (charSearchInput != "") {
       seriesList.forEach((series) => {
         if (series.characters.available > 0) {
           series.characters.items.forEach((character) => {
             if (
               character.name &&
-              character.name.toLowerCase().startsWith(searchValue.toLowerCase())
+              character.name
+                .toLowerCase()
+                .startsWith(charSearchInput.toLowerCase())
             ) {
               if (!(character.name in charNames)) {
                 let ID = character.resourceURI.split("/");
@@ -43,10 +60,11 @@ function App() {
     setCharCount(Object.keys(charList).length);
   };
 
-  const fetchSeries = async (seriesName) => {
-    const seriesNameMod = seriesName.replace(/\s/g, "%20");
+  const fetchSeries = async () => {
+    console.log(API_KEY);
+    const seriesNameMod = seriesSearchInput.replace(/\s/g, "%20");
     const ts = Date.now();
-    const preHash = ts + PRIV_KEY + API_KEY;
+    const hash = MD5(ts + PRIV_KEY + API_KEY).toString();
     const response = await fetch(
       "https://gateway.marvel.com:443/v1/public/series?titleStartsWith=" +
         seriesNameMod +
@@ -56,56 +74,72 @@ function App() {
         "&apikey=" +
         API_KEY +
         "&hash=" +
-        MD5(preHash).toString()
+        hash
     );
     let data = await response.json();
     data = data.data.results;
 
     setSeriesCount(data.length);
     setList(data);
-    const years = data.map((obj) => obj.startYear);
-    setNewest(Math.max(...years));
-    setOldest(Math.min(...years));
+    let years = {};
+    data.forEach((item) => {
+      if (years[item.startYear]) {
+        years[item.startYear] += 1;
+      } else {
+        years[item.startYear] = 1;
+      }
+    });
+    setYearData(years);
+    setNewest(Math.max(...Object.keys(years).map(Number)));
+    setOldest(Math.min(...Object.keys(years).map(Number)));
   };
-
-  useEffect(() => {
-    fetchSeries("a");
-  }, []);
 
   return (
     <div className="App">
       <div className="header">
         <img
-          class="headerPic"
+          className="headerPic"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Marvel_Logo.svg/2560px-Marvel_Logo.svg.png"
         ></img>
         <h1>Character Directory</h1>
       </div>
-      <div className="searchBars">
-        <label for="seriesSearch">Series:</label>
-        <input
-          id="seriesSearch"
-          type="text"
-          placeholder="Search for series"
-          onChange={(inputString) => fetchSeries(inputString.target.value)}
-        />
-
-        <label for="charSearch">Characters:</label>
-        <input
-          id="charSearch"
-          type="text"
-          placeholder="Search for characters"
-          onChange={(inputString) => searchChar(inputString.target.value)}
-        />
+      <div className="info">
+        <div className="searchBars">
+          <label for="seriesSearch">Series:</label>
+          <input
+            id="seriesSearch"
+            type="text"
+            placeholder="Search for series"
+            onChange={handleSeriesSearch}
+          />
+          <button className="submitBtn" onClick={handleSubmit}>
+            SUBMIT
+          </button>
+          <label for="charSearch">Characters:</label>
+          <input
+            id="charSearch"
+            type="text"
+            placeholder="Search for characters"
+            onChange={handleCharacterSearch}
+          />
+        </div>
+        {Object.keys(yearData).length > 0 && (
+          <div className="chart">
+            <SeriesChart chartData={yearData} />
+          </div>
+        )}
       </div>
+
       <div className="results">
         <div className="charList">
           <h3>Characters</h3>
-          {charCount > 0 && <p class="lastData">Count: {charCount}</p>}
+          {charCount > 0 && <p className="lastData">Count: {charCount}</p>}
           <ul>
             {Object.keys(charList).map((key, index) => {
               return (
-                <button className="charBtns" key={index}>{`${key}`}</button>
+                <Link to={`/heroInfo/${charList[key]}`} key={index}>
+                  <button className="charBtns" key={index}>{`${key}`}</button>
+                </Link>
               );
             })}
           </ul>
@@ -115,7 +149,7 @@ function App() {
           <h3>Series</h3>
           {oldestSeries > 0 && <p>Oldest Series: {oldestSeries}</p>}
           {newestSeries > 0 && <p>Newest Series: {newestSeries}</p>}
-          {seriesCount > 0 && <p class="lastData">Count: {seriesCount}</p>}
+          {seriesCount > 0 && <p className="lastData">Count: {seriesCount}</p>}
           <ul>
             {seriesList &&
               seriesList.map((series, index) => {
