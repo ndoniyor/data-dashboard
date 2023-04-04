@@ -1,8 +1,8 @@
-# Web Development Project 5 - *Marvel Character Directory*
+# Web Development Project 6 - *Marvel Character Directory*
 
 Submitted by: **Doniyor Nimatullo**
 
-This web app: **Utilizes Marvel API to allow the user to search for their favorite character by name and series**
+This web app: **Utilizes Marvel API to allow the user to search for their favorite character by name and series. Series data is visualized with a line graph. Character names can be clicked to open route to individualized character info page**
 
 Time spent: **2** hours spent in total
 
@@ -10,26 +10,20 @@ Time spent: **2** hours spent in total
 
 The following **required** functionality is completed:
 
-- [x] **The list displays a list of data fetched using an API call**
-- [x] **Data uses the useEffect React hook and async/await syntax**
-- [x] **The app dashboard includes at least three summary statistics about the data such as**
-  - [ ] Count for both characters and series
-  - [ ] Oldest series
-  - [ ] Newest Series
-- [x] **A search bar allows the user to search for an item in the fetched data**
-- [x] **Multiple different filters (2+) allow the user to filter items in the database by specified categories**
+- [x] **The app includes at least one unique chart developed using the fetched data that tell an interesting story**
+- [x] **Clicking on an item in the list view displays more details about it**
+- [x] **Clicking on an item has a direct, unique link to that item's detail view page**
 
 The following **optional** features are implemented:
 
-- [x] Multiple filters can be applied simultaneously
-- [ ] Filters use different input types such as a text input, a selection, or a slider
-- [ ] The user can enter specific bounds for filter values
+- [ ] The site's customized dashboard contains more content that explains what is interesting about the data
+- [ ] The site allows users to toggle between different data visualizations
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExODk0MWUzMjI4OTJlYTVhZGRmN2U2ZjY1MzNlMmEwMTVkOTVlODM0ZCZjdD1n/XoWDgYNhDLEdqEw9qG/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDZkNzRmMmU0NGY4YTc2NjBlOWI2YWI1ZWEzMGMyOGYxOWZhNDdlYSZjdD1n/3HvcQtqYTjPdoGy5OP/giphy.gif title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with Kooha {Linux}
